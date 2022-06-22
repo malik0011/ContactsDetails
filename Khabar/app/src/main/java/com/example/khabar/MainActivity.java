@@ -102,7 +102,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "No data found! Please Wait for a while!", Toast.LENGTH_SHORT).show();
         }else{
             while(res.moveToNext()){
-               DataFromLocal.add(new Contacts(res.getString(0),res.getString(1),res.getString(2),"","",new Phone("",res.getString(3),"")));
+               DataFromLocal.add(new Contacts("",res.getString(0),res.getString(1),"",res.getString(2),new Phone("",res.getString(3),"")));
             }
         }
     rcv.setAdapter(new MyAdapter(DataFromLocal));
