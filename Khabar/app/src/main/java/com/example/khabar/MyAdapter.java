@@ -14,6 +14,8 @@ import java.util.ArrayList;
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.holder> {
 
     ArrayList<Contacts>list;
+    //Contacts []list;
+
 
     public MyAdapter(ArrayList<Contacts> list) {
         this.list = list;
@@ -37,6 +39,9 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.holder> {
         holder.uMobile.setText((CharSequence)list.get(position).getPhone().getMobile());
         holder.uGender.setText((CharSequence)list.get(position).getGender());
         holder.uEmail.setText((CharSequence) list.get(position).getEmail());
+//        holder.uMobile.setText((CharSequence)list[position].getPhone().getMobile());
+//        holder.uGender.setText((CharSequence)list[position].getGender());
+//        holder.uEmail.setText((CharSequence) list[position].getEmail());
     }
 
     @Override

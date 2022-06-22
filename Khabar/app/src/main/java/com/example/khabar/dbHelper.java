@@ -44,4 +44,10 @@ public class dbHelper extends SQLiteOpenHelper {
         Cursor cursor = DB.rawQuery("select * from UserDetails",null);
         return cursor;
     }
+    public void deleteAll()
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("delete from "+ "UserDetails");
+        db.close();
+    }
 }
