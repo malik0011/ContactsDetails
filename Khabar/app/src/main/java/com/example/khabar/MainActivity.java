@@ -3,6 +3,7 @@ package com.example.khabar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Context;
 import android.content.IntentFilter;
@@ -10,6 +11,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
     Contacts[] data;
     ArrayList<Contacts> list = new ArrayList<>();
     dbHelper DB;
+    private SwipeRefreshLayout refreshLayout;
     private static String URL = "https://api.androidhive.info/contacts";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,22 +42,56 @@ public class MainActivity extends AppCompatActivity {
         //binding
         rcv = (RecyclerView) findViewById(R.id.recView);
         rcv.setLayoutManager(new LinearLayoutManager(this));//passing the context
+
+        //refresh
+            refreshLayout = findViewById(R.id.swipeRefreshLayout);
         //local
         DB = new dbHelper(this);
-        try {
-            System.out.println(isConnected());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            System.out.println(isConnected());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         //first we have to check is internet avaliable?
         //if yes the store it in localDB and show the data
         //else get the data from localDB
+        getDataFormAPI();
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                refreshLayout.setRefreshing(false);
+                try {
+                    if (isConnected()){
+
+                        Runnable runnable = new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+                                getDataFormAPI();
+                                Log.d("TAG", "run: "+Thread.currentThread().getName());
+                            }
+                        };
+                        new Thread(runnable).start();//to work in Background
+                    }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+    }
+
+    private void getDataFormAPI() {
         try {
             if(isConnected()){
-                Toast.makeText(this, "Storing the data..", Toast.LENGTH_SHORT).show();
+               // Toast.makeText(this, "Storing the data..", Toast.LENGTH_SHORT).show();
 
                 DB.deleteAll();//delete the old data for avoiding duplicates
                 StringRequest request = new StringRequest(URL, new Response.Listener<String>() {
@@ -90,7 +127,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (InterruptedException | IOException e) {
             e.printStackTrace();
         }
-
     }
 
     public void getDataFormLocal() {
